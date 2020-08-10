@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>wrangling on Analytic Space</title>
+		<link>/tags/wrangling/</link>
+		<description>Recent content in wrangling on </description>
+		<generator>Hugo -- gohugo.io</generator>
+		<language>en-us</language>
+		<copyright>© Copyright notice | Vitae theme for Hugo</copyright>
+		<lastBuildDate>Mon, 10 Aug 2020 00:00:00 +0000</lastBuildDate>
+		
+		<atom:link href="/tags/wrangling/index.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>Usando dplyr (Tidyverse)</title>
+			<link>/post/usando-dplyr-tidyverse/</link>
+			<pubDate>Mon, 10 Aug 2020 00:00:00 +0000</pubDate>
+			
+			<guid>/post/usando-dplyr-tidyverse/</guid>
+			<description>
+				
+				Olá! Esse é o meu primeiro post e estou muito animada. Por isso decidi começar dissecando um pouco do Tidyverse (que é ...
+				
+			</description>
+		</item>
+		
+	</channel>
+</rss>

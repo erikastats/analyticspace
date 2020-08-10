@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1597089164009.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2506266740",
+    "id" : "7E94E4CB",
+    "lastKnownWriteTime" : 1597095138,
+    "last_content_update" : 1597095138637,
+    "path" : "~/Projetos Érika/analyticspace/content/post/2020-08-10-usando-dplyr-tidyverse.pt.Rmd",
+    "project_path" : "content/post/2020-08-10-usando-dplyr-tidyverse.pt.Rmd",
+    "properties" : {
+        "cursorPosition" : "155,274",
+        "scrollLine" : "133"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

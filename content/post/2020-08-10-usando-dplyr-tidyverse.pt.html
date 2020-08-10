@@ -1,0 +1,174 @@
+---
+title: Usando dplyr (Tidyverse)
+author: Erika SM
+date: '2020-08-10'
+slug: usando-dplyr-tidyverse
+categories:
+  - R
+tags:
+  - tidyverse
+  - r
+  - wrangling
+draft: yes
+---
+
+
+
+<p>Olá! Esse é o meu primeiro post e estou muito animada. Por isso decidi começar dissecando um pouco do Tidyverse (que é o meu xodózinho no R).
+Tidyverse é uma coleção de pacotes intencionalmente feito para Ciência de Dados. Com as bibliotecas fornecidas por essa coleção é possível:
+- Deixar o código mais organizado;
+- Evitar repetições de objetos;
+- Evitar acúmulo de uma função dentro da outra;
+- É possível fazer gráficos mais bonitos;
+- Facilita a limpeza dos dados;
+- Facilita a manipulação de strings.</p>
+<p>E essas são só algumas vantagens. Não estou exatamente tentando fazer você deixar os comandos básicos do R de lado, mas depois que você começar a escrever seu código com Tidyverse, a vida fará mais sentido.</p>
+<div id="pipe" class="section level3">
+<h3>Pipe %&gt;%</h3>
+<p>Pra quem não está familiarizado, todas as bibliotecas contidas no Tidyverse utilizam do pipe <code>%&gt;%</code> como artifício. Você pode pensar nele como quem está enviando um valor para uma expressão ou uma função. Vamos tentar explicar melhor.</p>
+<p>Suponha que você tenha o seguinte código:</p>
+<pre class="r"><code>a = 1:30
+round(sqrt(mean(a)),2)</code></pre>
+<pre><code>## [1] 3.94</code></pre>
+<p>Legal… É um código pequeno, então não é tão fácil de se perder no que está sendo feito. Mas e se tivesse um jeito de deixar mais claro o que se deve fazer primeiro e em seguida, e depois e depois? Dá pra atribuir o valor de cada resultado a um objeto, mas essa também não é a melhor solução. Que tal isso:</p>
+<pre class="r"><code>a = 1:30
+a %&gt;% mean() %&gt;% sqrt() %&gt;% round(2)</code></pre>
+<pre><code>## [1] 3.94</code></pre>
+<p>Aqui está bem mais fácil de identificar cada passo tomado. O pipe ( <code>%&gt;%</code> ) será um dos seus maiores aliados nas bibliotecas do Tidyverse. Pra facilitar, o atalho pra criá-lo é <em>Ctrl + Shift + m</em></p>
+<p>Chega de falar da mãe e vamos falar de um dos filhos. O pacote <code>dplyr</code> é <em>uma ferramenta rápida e consistente para trabalhar com dataframes</em>, isso é o que a própria descrição do pacote diz. Ele vai será usado para <strong>manipulação de dados</strong>.</p>
+<p>Pra mudar um pouco e deixar o dataset <em>iris</em> e o <em>mtcars</em> descansando, vamos usar de exemplo o dataset <em>trees</em> com a dados sobre diâmetro, peso e volume da madeira.</p>
+<pre class="r"><code>data(&quot;trees&quot;)
+trees %&gt;% head(4)</code></pre>
+<pre><code>##   Girth Height Volume
+## 1   8.3     70   10.3
+## 2   8.6     65   10.3
+## 3   8.8     63   10.2
+## 4  10.5     72   16.4</code></pre>
+</div>
+<div id="arrange" class="section level3">
+<h3>Arrange</h3>
+<p>Substituindo a função <code>sort()</code>, nós temos o <code>arrange()</code>. Você poderá ordenar as linhas por uma ou mais colunas:</p>
+<pre class="r"><code>trees %&gt;% 
+  arrange(Height) %&gt;% 
+  head(4)</code></pre>
+<pre><code>##   Girth Height Volume
+## 1   8.8     63   10.2
+## 2  13.8     64   24.9
+## 3   8.6     65   10.3
+## 4  11.0     66   15.6</code></pre>
+<p>Repare que você deve colocar o nome da coluna direto dentro da função, porque você já indicou inicialmente de qual dataframe a coluna pertence (através do pipe).</p>
+</div>
+<div id="filter" class="section level3">
+<h3>Filter</h3>
+<p>Usaremos o <code>filter()</code> para filtrar as linhas de acordo com alguma regra lógica desejada em relação a colunas:</p>
+<pre class="r"><code>trees %&gt;% 
+  filter(Volume &gt; 40)</code></pre>
+<pre><code>##   Girth Height Volume
+## 1  16.3     77   42.6
+## 2  17.3     81   55.4
+## 3  17.5     82   55.7
+## 4  17.9     80   58.3
+## 5  18.0     80   51.5
+## 6  18.0     80   51.0
+## 7  20.6     87   77.0</code></pre>
+</div>
+<div id="between" class="section level3">
+<h3>Between</h3>
+<p>Um bom uso dessa função é em conjunto com o <code>filter()</code> para filtrar valores que estão em um determinado intervalo. Um detalhe impotante a ser falado é que os valores usados como intervalo pra função são inclusivos:</p>
+<pre class="r"><code>trees %&gt;% 
+    filter( between(Volume, 40,55.4) )</code></pre>
+<pre><code>##   Girth Height Volume
+## 1  16.3     77   42.6
+## 2  17.3     81   55.4
+## 3  18.0     80   51.5
+## 4  18.0     80   51.0</code></pre>
+</div>
+<div id="group_by" class="section level3">
+<h3>group_by</h3>
+<p>Essa função é bem familiar para usuários de SQL. É usada para agrupar valores e sem seguida fazer alguma transformação por grupo. Mostrarei um uso dela junto com a próxima função.</p>
+</div>
+<div id="count" class="section level2">
+<h2>Count</h2>
+<p>Contar observações por grupo (particularmente eu prefiro usar o summarise para contar, porque essa função deu um tipo de erro quando usada no Shiny).</p>
+<pre class="r"><code>trees %&gt;% 
+  group_by(Height) %&gt;% 
+  count(Girth) %&gt;% 
+  tail()</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   Height [6]
+##   Height Girth     n
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+## 1     81  17.3     1
+## 2     82  17.5     1
+## 3     83  10.8     1
+## 4     85  12.9     1
+## 5     86  13.3     1
+## 6     87  20.6     1</code></pre>
+<p>É possível usar diretamente a função sem o group_by. A diferença é que com o <code>group_by</code> você pode indicar uma coluna pra ser agrupada e fazer a transformação em outra, como o exemplo acima.</p>
+<pre class="r"><code>trees %&gt;% 
+  count(Girth) %&gt;% 
+  head(4)</code></pre>
+<pre><code>##   Girth n
+## 1   8.3 1
+## 2   8.6 1
+## 3   8.8 1
+## 4  10.5 1</code></pre>
+<div id="distinct" class="section level3">
+<h3>Distinct</h3>
+<p>Essa função substituirá a função básica <code>unique()</code>. Ela seleciona somente as linhas com valores distintos/únicos de um dataframe.</p>
+<pre class="r"><code>trees %&gt;% 
+  distinct(Height) %&gt;% 
+  head(4)</code></pre>
+<pre><code>##   Height
+## 1     70
+## 2     65
+## 3     63
+## 4     72</code></pre>
+</div>
+<div id="mutate" class="section level3">
+<h3>Mutate</h3>
+<p>É uma das funções mais usadas. É utilizada para criar novas colunas e modificar as existentes.</p>
+<pre class="r"><code>trees %&gt;% 
+  mutate(Vo_he = Volume/Height,
+         Girth = Girth %&gt;% round()) %&gt;% 
+  head(4)</code></pre>
+<pre><code>##   Girth Height Volume     Vo_he
+## 1     8     70   10.3 0.1471429
+## 2     9     65   10.3 0.1584615
+## 3     9     63   10.2 0.1619048
+## 4    10     72   16.4 0.2277778</code></pre>
+</div>
+<div id="select" class="section level3">
+<h3>Select</h3>
+<p><code>select()</code> é a função número 2 em relação das mais usadas desse pacote (bom, pelo menos pra mim). Esta função seleciona as colunas desejadas em um dataframe. Ela funciona tanto com o nome das colunas, quanto com o número das colunas, dando até pra misturar os dois ao selecionar.</p>
+<pre class="r"><code>trees %&gt;% 
+  select(1, Volume) %&gt;% 
+  head(4)</code></pre>
+<pre><code>##   Girth Volume
+## 1   8.3   10.3
+## 2   8.6   10.3
+## 3   8.8   10.2
+## 4  10.5   16.4</code></pre>
+</div>
+<div id="summarise" class="section level3">
+<h3>Summarise</h3>
+<p>E por último, mas não menos importante, indico a função <code>summarise()</code>. Ela cria um novo dataframe com as transformações que voê precisa, normalmente é usada em conjunto com a função <code>group_by()</code>.</p>
+<pre class="r"><code>trees %&gt;% 
+  group_by(Height) %&gt;% 
+  summarise(Media = mean(Volume),
+            Quantidade = n()) %&gt;% 
+  head(4)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   Height Media Quantidade
+##    &lt;dbl&gt; &lt;dbl&gt;      &lt;int&gt;
+## 1     63  10.2          1
+## 2     64  24.9          1
+## 3     65  10.3          1
+## 4     66  15.6          1</code></pre>
+</div>
+<div id="outras-funções" class="section level3">
+<h3>Outras funções</h3>
+<p>As funções que apresentei são as que mais uso diariamente, mas esse pacote possuem muitas outras pra manipulação de dados. O segredo é sempre dar uma olhadinha na documentação, sempre vai ter algo que vai de ajudar de uma forma melhor na sua manipulação dos dados e análise.</p>
+</div>
+</div>

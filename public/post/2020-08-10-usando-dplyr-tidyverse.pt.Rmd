@@ -1,0 +1,156 @@
+---
+title: Usando dplyr (Tidyverse)
+author: Erika SM
+date: '2020-08-10'
+slug: usando-dplyr-tidyverse
+categories:
+  - R
+tags:
+  - tidyverse
+  - r
+  - wrangling
+draft: yes
+---
+
+Olá! Esse é o meu primeiro post e estou muito animada. Por isso decidi começar dissecando um pouco do Tidyverse (que é o meu xodózinho no R). 
+Tidyverse é uma coleção de pacotes intencionalmente feito para Ciência de Dados. Com as bibliotecas fornecidas por essa coleção é possível:
+  - Deixar o código mais organizado;
+  - Evitar repetições de objetos;
+  - Evitar acúmulo de uma função dentro da outra;
+  - É possível fazer gráficos mais bonitos;
+  - Facilita a limpeza dos dados;
+  - Facilita a manipulação de strings.
+  
+E essas são só algumas vantagens. Não estou exatamente tentando fazer você deixar os comandos básicos do R de lado, mas depois que você começar a escrever seu código com Tidyverse, a vida fará mais sentido. 
+
+### Pipe %>% 
+
+Pra quem não está familiarizado, todas as bibliotecas contidas no Tidyverse utilizam do pipe `%>%` como artifício. Você pode pensar nele como quem está enviando um valor para uma expressão ou uma função. Vamos tentar explicar melhor.
+
+Suponha que você tenha o seguinte código:
+```{r}
+a = 1:30
+round(sqrt(mean(a)),2)
+```
+
+Legal... É um código pequeno, então não é tão fácil de se perder no que está sendo feito. Mas e se tivesse um jeito de deixar mais claro o que se deve fazer primeiro e em seguida, e depois e depois? Dá pra atribuir o valor de cada resultado a um objeto, mas essa também não é a melhor solução. Que tal isso:
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+
+```{r}
+a = 1:30
+a %>% mean() %>% sqrt() %>% round(2)
+```
+
+Aqui está bem mais fácil de identificar cada passo tomado. O pipe ( `%>%` ) será um dos seus maiores aliados nas bibliotecas do Tidyverse. Pra facilitar, o atalho pra criá-lo é *Ctrl + Shift + m*
+
+Chega de falar da mãe e vamos falar de um dos filhos. O pacote `dplyr` é _uma ferramenta rápida e consistente para trabalhar com dataframes_, isso é o que a própria descrição do pacote diz. Ele vai será usado para **manipulação de dados**. 
+
+Pra mudar um pouco e deixar o dataset _iris_ e o _mtcars_ descansando, vamos usar de exemplo o dataset _trees_ com a dados sobre diâmetro, peso e volume da madeira.
+
+```{r}
+data("trees")
+trees %>% head(4)
+```
+
+### Arrange
+
+Substituindo a função `sort()`, nós temos o `arrange()`. Você poderá ordenar as linhas por uma ou mais colunas:
+```{r}
+trees %>% 
+  arrange(Height) %>% 
+  head(4)
+```
+
+Repare que você deve colocar o nome da coluna direto dentro da função, porque você já indicou inicialmente de qual dataframe a coluna pertence (através do pipe).
+
+### Filter
+
+Usaremos o `filter()` para filtrar as linhas de acordo com alguma regra lógica desejada em relação a colunas:
+
+```{r}
+trees %>% 
+  filter(Volume > 40)
+```
+
+### Between
+
+Um bom uso dessa função é em conjunto com o `filter()` para filtrar valores que estão em um determinado intervalo. Um detalhe impotante a ser falado é que os valores usados como intervalo pra função são inclusivos:
+
+```{r}
+trees %>% 
+    filter( between(Volume, 40,55.4) )
+```
+
+### group_by
+
+Essa função é bem familiar para usuários de SQL. É usada para agrupar valores e sem seguida fazer alguma transformação por grupo. Mostrarei um uso dela junto com a próxima função.
+
+## Count
+
+Contar observações por grupo (particularmente eu prefiro usar o summarise para contar, porque essa função deu um tipo de erro quando usada no Shiny).
+
+```{r}
+trees %>% 
+  group_by(Height) %>% 
+  count(Girth) %>% 
+  tail()
+
+```
+
+É possível usar diretamente a função sem o group_by. A diferença é que com o `group_by` você pode indicar uma coluna pra ser agrupada e fazer a transformação em outra, como o exemplo acima. 
+
+```{r}
+trees %>% 
+  count(Girth) %>% 
+  head(4)
+```
+
+### Distinct
+
+Essa função substituirá a função básica `unique()`. Ela seleciona somente as linhas com valores distintos/únicos de um dataframe.
+
+```{r}
+trees %>% 
+  distinct(Height) %>% 
+  head(4)
+```
+
+### Mutate
+
+É uma das funções mais usadas. É utilizada para criar novas colunas e modificar as existentes.
+
+```{r}
+trees %>% 
+  mutate(Vo_he = Volume/Height,
+         Girth = Girth %>% round()) %>% 
+  head(4)
+```
+
+### Select
+
+`select()` é a função número 2 em relação das mais usadas desse pacote (bom, pelo menos pra mim). Esta função seleciona as colunas desejadas em um dataframe. Ela funciona tanto com o nome das colunas, quanto com o número das colunas, dando até pra misturar os dois ao selecionar.
+
+```{r}
+trees %>% 
+  select(1, Volume) %>% 
+  head(4)
+```
+
+### Summarise
+
+E por último, mas não menos importante, indico a função `summarise()`. Ela cria um novo dataframe com as transformações que voê precisa, normalmente é usada em conjunto com a função `group_by()`.
+
+```{r}
+trees %>% 
+  group_by(Height) %>% 
+  summarise(Media = mean(Volume),
+            Quantidade = n()) %>% 
+  head(4)
+```
+
+### Outras funções
+
+As funções que apresentei são as que mais uso diariamente, mas esse pacote possuem muitas outras pra manipulação de dados. O segredo é sempre dar uma olhadinha na documentação, sempre vai ter algo que vai de ajudar de uma forma melhor na sua manipulação dos dados e análise.
